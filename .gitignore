@@ -1,0 +1,15 @@
+/node_modules
+/*.log
+/dist
+/dist-zip
+/yarn.lock
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
