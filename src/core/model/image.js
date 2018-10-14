@@ -39,11 +39,12 @@ class Image {
 }
 
 class ImageViewSession {
-  constructor(allImages, tabTitle) {
+  constructor(allImages, tabTitle, tabUrl) {
     this.allImages = allImages;
     this.userLikeImages = new Set();
     this.userUnLikeImages = new Set();
     this.tabTitle = tabTitle;
+    this.tabUrl = tabUrl;
   }
 
   addLikeImages(image) {

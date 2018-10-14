@@ -83,7 +83,7 @@ export default {
   created: function() {
     console.log('created ImagePicker:' + this.$store.state.images.length);
     this.title = this.$store.state.title;
-    this.session = new ImageViewSession(this.$store.state.images, this.title);
+    this.session = new ImageViewSession(this.$store.state.images, this.title, this.$store.state.tabUrl);
 
     let allImages = this.session.allImages;
     let domainData = getImageDomains(allImages);
@@ -156,6 +156,23 @@ export default {
     saveImages: function() {
       // Init Downloader
       let downloadFolder = toValidFileName(this.title) + '/';
+      let tabUrl = this.session.tabUrl;
+
+      chrome.webRequest.onBeforeSendHeaders.addListener(
+        function(details) {
+          var headers = details.requestHeaders;
+          headers.push({
+            name: 'Referer',
+            value: tabUrl,
+          });
+          console.log('headers: %o', Headers);
+          return { requestHeaders: headers };
+        },
+        {
+          urls: ['<all_urls>'],
+        },
+        ['blocking', 'requestHeaders']
+      );
 
       chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
         let filePath = downloadFolder + item.filename;

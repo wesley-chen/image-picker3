@@ -9,9 +9,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    foo: 'bar',
-    title: "",
-    images: []
+    title: 'Image Picker v3',
+    tabUrl: '',
+    images: [],
   },
   getters,
   mutations,
