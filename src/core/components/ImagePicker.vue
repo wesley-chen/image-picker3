@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app persistent :dark="themeDark" >
 
     <v-navigation-drawer persistent enable-resize-watcher fixed app
             v-model="drawer" >
@@ -12,7 +12,8 @@
         <v-icon v-html="drawer ?  'chevron_left': 'chevron_right'"></v-icon>
       </v-btn>
 
-      <v-tabs v-model="activeTabIdx" centered slider-color="yellow" >
+      <v-tabs v-model="activeTabIdx" centered slider-color="yellow" 
+            color="transparent">
             <v-tab @click="showTab(0)">
                     Selected 
                     <span > ({{this.selectedImageCount}})</span>
@@ -25,6 +26,10 @@
 
       <v-spacer></v-spacer>
 
+      <v-btn icon @click.stop="themeDark = !themeDark">
+        <v-icon>invert_colors</v-icon>
+      </v-btn>
+
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn>
@@ -35,6 +40,11 @@
 
         <ImageGrid :images="images" v-on:image-clicked="onImageClicked"/>
 
+        <v-btn fab fixed bottom right  @click="saveImages()"
+                color="primary" v-show="activeTabIdx == 0">
+              <v-icon>cloud_download</v-icon>
+        </v-btn>
+
         <v-snackbar v-model="showSnackbar" top right >
            {{ message }}
            <v-btn color="pink" flat @click="showSnackbar = false" >
@@ -44,8 +54,11 @@
 
     </v-content>
 
-    <v-footer :fixed="fixed" app>
-      <span>&copy; 2017</span>
+    <v-footer :fixed="fixed" app class="justify-center">
+      <v-spacer></v-spacer>
+      <span>Download to</span>
+      <v-text-field id="fileNameBox" single-line :value="title"> </v-text-field>
+      <v-spacer></v-spacer>
     </v-footer>
 
   </v-app>
@@ -54,7 +67,7 @@
 <script>
 import ImageGrid from './ImageGrid';
 import FilterPanel from './FilterPanel';
-import { initData, getImageDomains, getImageTypes, Filter, RangeLimit, ImageViewSession } from '../model';
+import { initData, getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
 
 export default {
   name: 'ImagePicker',
@@ -69,7 +82,8 @@ export default {
 
   created: function() {
     console.log('created ImagePicker:' + this.$store.state.images.length);
-    this.session = new ImageViewSession(this.$store.state.images);
+    this.title = this.$store.state.title;
+    this.session = new ImageViewSession(this.$store.state.images, this.title);
 
     let allImages = this.session.allImages;
     let domainData = getImageDomains(allImages);
@@ -89,10 +103,11 @@ export default {
       unselectedImageCount: 0,
       showSnackbar: false,
       message: '',
+      themeDark: true,
       clipped: false,
       drawer: true,
       fixed: false,
-      title: 'Image Picker 3',
+      title: '',
     };
   },
 
@@ -138,6 +153,35 @@ export default {
       }
     },
 
+    saveImages: function() {
+      // Init Downloader
+      let downloadFolder = toValidFileName(this.title) + '/';
+
+      chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
+        let filePath = downloadFolder + item.filename;
+        suggest({
+          filename: filePath,
+          conflictAction: 'uniquify',
+        });
+      });
+
+      this.showMessage('Saving ' + this.images.length + ' images to ' + downloadFolder);
+
+      this.images.forEach(img => {
+        let imageFullName = img.fileName + '.' + img.type;
+        console.log('Saving image ' + imageFullName + ' to ' + downloadFolder + ' from: ' + img.src);
+        chrome.downloads.download(
+          {
+            url: img.src,
+            filename: imageFullName,
+            saveAs: false,
+            conflictAction: 'uniquify',
+          },
+          function(downloadId) {}
+        );
+      });
+    },
+
     showMessage: function(message) {
       this.message = message;
       this.showSnackbar = true;
@@ -146,7 +190,7 @@ export default {
 };
 </script>
 <style>
-#toolbar-ip {
-  background-color: #424242;
+#fileNameBox {
+  margin-left: 30px;
 }
 </style>
