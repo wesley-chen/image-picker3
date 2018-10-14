@@ -1,55 +1,62 @@
 class RangeLimit {
-    constructor(min, max, includedUnknown) {
-        this.min = min;
-        this.max = max;
-        this.includedUnknown = includedUnknown;
-    }
+  constructor(min, max, includedUnknown) {
+    this.min = min;
+    this.max = max;
+    this.includedUnknown = includedUnknown;
+  }
 
-    isInRange(value) {
-        let isLargeThanMin = (!Number.isFinite(this.min) || !Number.isFinite(value) || this.min < value);
-        let isLessThanMax = (!Number.isFinite(this.max) || !Number.isFinite(value) || this.max > value);
-        //debugger;
-        return isLargeThanMin && isLessThanMax;
-    }
+  isInRange(value) {
+    let isLargeThanMin = !Number.isFinite(this.min) || !Number.isFinite(value) || this.min < value;
+    let isLessThanMax = !Number.isFinite(this.max) || !Number.isFinite(value) || this.max > value;
+    //debugger;
+    return isLargeThanMin && isLessThanMax;
+  }
 }
 
 class Category {
-    constructor(name, count, selected) {
-        this.name = name;
-        this.count = count;
-        this.selected = selected;
-    }
+  constructor(name, count, selected) {
+    this.name = name;
+    this.count = count;
+    this.selected = selected;
+  }
 }
 
 class Filter {
+  constructor(domains, imageTypes, sizeLimit, widthLimit, heightLimit) {
+    this.domains = domains;
+    this.imageTypes = imageTypes;
+    this.sizeLimit = sizeLimit;
+    this.widthLimit = widthLimit;
+    this.heightLimit = heightLimit;
+  }
 
-    constructor(domains, imageTypes, sizeLimit, widthLimit, heightLimit) {
-        this.domains = domains;
-        this.imageTypes = imageTypes;
-        this.sizeLimit = sizeLimit;
-        this.widthLimit = widthLimit;
-        this.heightLimit = heightLimit;
-    }
+  filter(images) {
+    let selectedDomains = this.domains.filter(d => d.selected).map(d => d.name);
+    let selectedTypes = this.imageTypes.filter(t => t.selected).map(t => t.name);
 
-    filter(images) {
+    let selectedImages = images
+      .filter(img => {
+        if (img.fileSize) {
+          const fileSize = img.fileSize / 1000; // treat as KB
+          return this.sizeLimit.isInRange(img.fileSize / 1000);
+        } else {
+          // Unknown size
+          return true;
+        }
+      })
+      .filter(img => this.widthLimit.isInRange(img.width))
+      .filter(img => this.heightLimit.isInRange(img.height))
+      .filter(img => selectedDomains.includes(img.domain))
+      .filter(img => selectedTypes.includes(img.type));
 
-        let selectedDomains = this.domains.filter(d => d.selected).map(d => d.name);
-        let selectedTypes = this.imageTypes.filter(t => t.selected).map(t => t.name);
+    //debugger;
 
-        let selectedImages = images.filter(img => this.sizeLimit.isInRange(img.size))
-            .filter(img => this.widthLimit.isInRange(img.width))
-            .filter(img => this.heightLimit.isInRange(img.height))
-            .filter(img => selectedDomains.includes(img.domain))
-            .filter(img => selectedTypes.includes(img.type));
+    return selectedImages;
+  }
 
-        //debugger;
-
-        return selectedImages;
-    }
-
-    static createDefaultFilter() {
-        return new Filter([], [], new RangeLimit(null, null, true), new RangeLimit(null, null, true), new RangeLimit(null, null, true))
-    }
+  static createDefaultFilter() {
+    return new Filter([], [], new RangeLimit(null, null, true), new RangeLimit(null, null, true), new RangeLimit(null, null, true));
+  }
 }
 
-export { RangeLimit, Category, Filter }
+export { RangeLimit, Category, Filter };

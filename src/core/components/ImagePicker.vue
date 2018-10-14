@@ -91,7 +91,7 @@ export default {
     let allImages = this.session.allImages;
     let domainData = getImageDomains(allImages);
     let typeData = getImageTypes(allImages);
-    this.filter = new Filter(domainData, typeData, new RangeLimit(0, 6000, true), new RangeLimit(null, 3000, true), new RangeLimit(0, null, true));
+    this.filter = new Filter(domainData, typeData, new RangeLimit(20, null, true), new RangeLimit(50, null, true), new RangeLimit(50, null, true));
 
     // Show the selected image after init
     this.showTab(0);
