@@ -1,6 +1,6 @@
-console.log('Collecting images...');
+console.log('Collecting images... for %s', document.title);
 
-function sendImages(imageElements, urlSet, tabTitle, tabUrl, batch) {
+function sendImages(imageElements, urlSet, batch) {
   // Convert to ImageInfo model
   let images = [];
   let guid = new Date().getTime();
@@ -29,11 +29,9 @@ function sendImages(imageElements, urlSet, tabTitle, tabUrl, batch) {
   }
 
   if (images.length > 0) {
-    console.log('Sending %d images from %s ', images.length, tabTitle);
+    console.log('Sending %d images from %s ', images.length, document.title);
     chrome.runtime.sendMessage({
       images: images,
-      title: tabTitle,
-      tabUrl: tabUrl,
     });
     console.log('Sent the %d batch images done.', batch);
   }
@@ -44,7 +42,7 @@ let allUrlSet = new Set();
 // Send the 1st batch images
 let batch = 1;
 let imageElements = [].slice.apply(document.getElementsByTagName('img'));
-sendImages(imageElements, allUrlSet, document.title, location.href, batch++);
+sendImages(imageElements, allUrlSet, batch++);
 
 new MutationObserver(function(records) {
   var newImages = [];
@@ -59,7 +57,7 @@ new MutationObserver(function(records) {
       // Container node
       record.addedNodes.forEach(parentNode => {
         // check container node
-        if (parentNode.nodeType !== Node.ELEMENT_NODE) {
+        if (parentNode.nodeType != Node.ELEMENT_NODE) {
           return;
         }
         let imageNodes = parentNode.querySelectorAll('img');
@@ -72,6 +70,6 @@ new MutationObserver(function(records) {
   });
 
   if (newImages.length > 0) {
-    sendImages(newImages, allUrlSet, document.title, location.href, batch++);
+    sendImages(newImages, allUrlSet, batch++);
   }
 }).observe(document.body, { childList: true, attributes: true, subtree: true });

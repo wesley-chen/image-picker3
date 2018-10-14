@@ -5,7 +5,7 @@
           <v-card-title>
             <div>
               <span class="grey--text">{{image.fileName}}.{{image.type}}</span><br>
-              <span>{{image.width}} x {{image.height}} </span><br>
+              <span>{{image.width}} x {{image.height}}, <span> {{Math.round(image.fileSize/1000)}} KB</span></span><br>
               <span>{{image.src}}</span>
             </div>
           </v-card-title>

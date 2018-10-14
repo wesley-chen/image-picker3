@@ -67,6 +67,7 @@
 <script>
 import ImageGrid from './ImageGrid';
 import FilterPanel from './FilterPanel';
+import gDownloader from '../model/downloader';
 import { initData, getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
 
 export default {
@@ -81,9 +82,11 @@ export default {
   },
 
   created: function() {
-    console.log('created ImagePicker:' + this.$store.state.images.length);
-    this.title = this.$store.state.title;
+    console.log('Created ImagePicker with %d images', this.$store.state.images.length);
+    this.title = this.$store.state.tabTitle;
     this.session = new ImageViewSession(this.$store.state.images, this.title, this.$store.state.tabUrl);
+
+    gDownloader.init(this.title);
 
     let allImages = this.session.allImages;
     let domainData = getImageDomains(allImages);
@@ -154,49 +157,8 @@ export default {
     },
 
     saveImages: function() {
-      // Init Downloader
-      let downloadFolder = toValidFileName(this.title) + '/';
-      let tabUrl = this.session.tabUrl;
-
-      chrome.webRequest.onBeforeSendHeaders.addListener(
-        function(details) {
-          var headers = details.requestHeaders;
-          headers.push({
-            name: 'Referer',
-            value: tabUrl,
-          });
-          console.log('headers: %o', Headers);
-          return { requestHeaders: headers };
-        },
-        {
-          urls: ['<all_urls>'],
-        },
-        ['blocking', 'requestHeaders']
-      );
-
-      chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-        let filePath = downloadFolder + item.filename;
-        suggest({
-          filename: filePath,
-          conflictAction: 'uniquify',
-        });
-      });
-
-      this.showMessage('Saving ' + this.images.length + ' images to ' + downloadFolder);
-
-      this.images.forEach(img => {
-        let imageFullName = img.fileName + '.' + img.type;
-        console.log('Saving image ' + imageFullName + ' to ' + downloadFolder + ' from: ' + img.src);
-        chrome.downloads.download(
-          {
-            url: img.src,
-            filename: imageFullName,
-            saveAs: false,
-            conflictAction: 'uniquify',
-          },
-          function(downloadId) {}
-        );
-      });
+      this.showMessage('Saving %d images to %s', this.images.length, gDownloader.downloadFolder);
+      gDownloader.download(this.images, this.session.tabUrl);
     },
 
     showMessage: function(message) {
