@@ -1,8 +1,8 @@
 class RangeLimit {
-  constructor(min, max, includedUnknown) {
-    this.min = min;
-    this.max = max;
-    this.includedUnknown = includedUnknown;
+  constructor(setting) {
+    this.min = setting.min;
+    this.max = setting.max;
+    this.includedUnknown = setting.includedUnknown;
   }
 
   isInRange(value) {
@@ -10,6 +10,12 @@ class RangeLimit {
     let isLessThanMax = !Number.isFinite(this.max) || !Number.isFinite(value) || this.max > value;
     //debugger;
     return isLargeThanMin && isLessThanMax;
+  }
+
+  copyTo(setting) {
+    setting.min = this.min;
+    setting.max = this.max;
+    setting.includedUnknown = this.includedUnknown;
   }
 }
 
@@ -55,7 +61,13 @@ class Filter {
   }
 
   static createDefaultFilter() {
-    return new Filter([], [], new RangeLimit(null, null, true), new RangeLimit(null, null, true), new RangeLimit(null, null, true));
+    return new Filter(
+      [],
+      [],
+      new RangeLimit({ min: null, max: null, includedUnknown: true }),
+      new RangeLimit({ min: null, max: null, includedUnknown: true }),
+      new RangeLimit({ min: null, max: null, includedUnknown: true })
+    );
   }
 }
 
