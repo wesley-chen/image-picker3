@@ -171,10 +171,10 @@ export default {
       if (this.activeTabIdx == 0) {
         // on Selected tab
         this.session.addUnLikeImages(image);
-        this.showMessage(`Moved image: ${imageId} to Unselected tab.`);
+        this.showMessage(`Moved image: ${image.fileFullName} to Unselected tab.`);
       } else {
         this.session.addLikeImages(image);
-        this.showMessage(`Added image: ${imageId} to Selected tab.`);
+        this.showMessage(`Added image: ${image.fileFullName} to Selected tab.`);
       }
       this.showTab(this.activeTabIdx);
     },
