@@ -21,19 +21,22 @@
       <v-btn icon @click.stop="themeDark = !themeDark">
         <v-icon>invert_colors</v-icon>
       </v-btn>
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>menu</v-icon>
-      </v-btn>
+      <v-menu bottom left :close-on-content-click="false" v-model="menu">
+        <v-btn icon slot="activator">
+          <v-icon>menu</v-icon>
+        </v-btn>
+        <OptionPanel :settings="settings" v-on:setting-change="onSettingChange"/>
+      </v-menu>
     </v-toolbar>
     <v-content>
-      <ImageGrid :images="images" v-on:image-clicked="onImageClicked"/>
+      <ImageGrid :images="images" v-on:image-clicked="onImageClicked" :settings="settings"/>
       <v-btn
         fab
         fixed
         bottom
         right
-        @click="saveImages()"
         color="primary"
+        @click="saveImages()"
         v-show="activeTabIdx == 0"
       >
         <v-icon>cloud_download</v-icon>
@@ -55,6 +58,7 @@
 <script>
 import ImageGrid from './ImageGrid';
 import FilterPanel from './FilterPanel';
+import OptionPanel from './OptionPanel';
 import gDownloader from '../model/downloader';
 import { initData, getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
 
@@ -68,6 +72,7 @@ export default {
   components: {
     ImageGrid,
     FilterPanel,
+    OptionPanel,
   },
 
   created: function() {
@@ -117,6 +122,7 @@ export default {
   data() {
     return {
       filter: Filter.createDefaultFilter(),
+      settings: null,
       images: [],
       activeTabIdx: 0,
       selectedImageCount: 0,
@@ -126,6 +132,7 @@ export default {
       themeDark: true,
       clipped: false,
       drawer: true,
+      menu: false,
       fixed: false,
       title: '',
     };
@@ -140,6 +147,13 @@ export default {
       this.filter.sizeLimit.copyTo(this.settings.filter.sizeLimit);
       this.filter.widthLimit.copyTo(this.settings.filter.widthLimit);
       this.filter.heightLimit.copyTo(this.settings.filter.heightLimit);
+      console.log('Saving ImagePicker Settings. %o', this.settings);
+      chrome.storage.sync.set({ ImagePickerSettings: this.settings }, () => {
+        console.log('Saved ImagePicker Settings.');
+      });
+    },
+
+    onSettingChange: function() {
       console.log('Saving ImagePicker Settings. %o', this.settings);
       chrome.storage.sync.set({ ImagePickerSettings: this.settings }, () => {
         console.log('Saved ImagePicker Settings.');

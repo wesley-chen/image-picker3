@@ -15,17 +15,15 @@
           :aspect-ratio="image.width/image.height"
         />
       </div>
-      <v-card-title>
-        <div>
-          <span class="grey--text">{{image.fileName}}.{{image.type}}</span>
-          <br>
-          <span>
-            {{image.width}} x {{image.height}},
-            <span>{{Math.round(image.fileSize/1000)}} KB</span>
-          </span>
-          <br>
-          <span>{{image.src}}</span>
-        </div>
+      <v-card-title v-if="showCaption">
+        <v-layout column>
+          <div v-if="settings.view.showImageName" class="caption">{{image.fileName}}.{{image.type}}</div>
+          <div
+            class="caption"
+            v-if="settings.view.showImageMeta"
+          >{{image.width}} x {{image.height}}, {{Math.round(image.fileSize/1000)}} KB</div>
+          <div v-if="settings.view.showImageUrl" class="caption">{{image.src}}</div>
+        </v-layout>
       </v-card-title>
     </v-card>
   </v-hover>
@@ -40,6 +38,10 @@ export default {
     },
     boxWidth: {
       type: Number,
+      required: true,
+    },
+    settings: {
+      type: Object,
       required: true,
     },
   },
@@ -74,6 +76,14 @@ export default {
         width: imgWidth + 'px',
         height: imgHeight + 'px',
       };
+    },
+
+    showCaption: function() {
+      const showName = this.settings.view.showImageName;
+      const showMeta = this.settings.view.showImageMeta;
+      const showURL = this.settings.view.showImageUrl;
+
+      return showName || showMeta || showURL;
     },
   },
 };
