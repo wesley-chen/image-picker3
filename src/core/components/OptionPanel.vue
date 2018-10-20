@@ -29,8 +29,16 @@
                     ></v-checkbox>
                 </v-list-tile-action>
             </v-list-tile>
+            <v-divider></v-divider>
+            <v-subheader>View Mode</v-subheader>
+            <v-list-tile>
+                <v-radio-group v-model="settings.view.viewMode" row>
+                    <v-radio label="Thumbnail" value="Thumbnail"></v-radio>
+                    <v-radio label="FitWidth" value="FitWidth"></v-radio>
+                    <v-radio label="100%" value="Percent100"></v-radio>
+                </v-radio-group>
+            </v-list-tile>
         </v-list>
-        <v-divider></v-divider>
     </v-card>
 </template>
 

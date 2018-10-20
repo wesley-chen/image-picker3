@@ -48,24 +48,28 @@ export default {
 
   computed: {
     cardStyle: function() {
-      return {
+      // Display as Thumbnail by default
+      let style = {
         width: this.boxWidth + 'px',
-        //height: this.boxWidth + 120 + 'px',
       };
+
+      if (this.settings.view.viewMode != 'Thumbnail') {
+        style = {
+          width: '100%',
+        };
+      }
+      return style;
     },
 
     boxStyle: function() {
-      return {
-        width: this.boxWidth + 'px',
-        // height: this.boxWidth + 'px',
-        // 'line-height': this.boxWidth + 'px',
-      };
+      return {};
     },
 
     imageStyle: function() {
       const img = this.image;
+
       var imageRate = this.boxWidth / Math.max(img.width, img.height, 1);
-      if (imageRate > 1) {
+      if (imageRate > 1 || this.settings.view.viewMode == 'Percent100') {
         // for small image, no change
         imageRate = 1;
       }
