@@ -1,9 +1,20 @@
 console.log('Collecting images... for %s', document.title);
 
+function generateID() {
+  return (
+    Math.random()
+      .toString(16)
+      .slice(2) +
+    new Date().getTime() +
+    Math.random()
+      .toString(16)
+      .slice(2)
+  );
+}
+
 function sendImages(imageElements, urlSet, batch) {
   // Convert to ImageInfo model
   let images = [];
-  let guid = new Date().getTime();
 
   for (let i = 0; i < imageElements.length; i++) {
     let imgElement = imageElements[i];
@@ -18,8 +29,9 @@ function sendImages(imageElements, urlSet, batch) {
     var offsetTop = 0;
     // var top = imgElement.getBoundingClientRect().top + document.documentElement.scrollTop;
     console.log('Colleced image: ', imgElement.src);
+    let guid = generateID();
     var image = {
-      id: guid++,
+      id: guid,
       src: imgElement.src,
       width: imgElement.width,
       height: imgElement.height,
