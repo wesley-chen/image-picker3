@@ -1,11 +1,11 @@
 <template>
-  <v-app persistent :dark="themeDark">
-    <v-navigation-drawer persistent enable-resize-watcher fixed app v-model="drawer">
+  <v-app persistent :dark="settings.view.themeDark">
+    <v-navigation-drawer persistent enable-resize-watcher fixed app v-model="showDrawer">
       <FilterPanel :filter="filter" v-on:filter-change="onFilterChange"/>
     </v-navigation-drawer>
-    <v-toolbar app :clipped-left="clipped" id="toolbar-ip">
-      <v-btn icon @click.stop="drawer = !drawer">
-        <v-icon v-html="drawer ?  'chevron_left': 'chevron_right'"></v-icon>
+    <v-toolbar app clipped-left="false">
+      <v-btn icon @click.stop="showDrawer = !showDrawer">
+        <v-icon v-html="showDrawer ?  'chevron_left': 'chevron_right'"></v-icon>
       </v-btn>
       <v-tabs v-model="activeTabIdx" centered slider-color="yellow" color="transparent">
         <v-tab @click="showTab(0)">
@@ -18,10 +18,10 @@
         </v-tab>
       </v-tabs>
       <v-spacer></v-spacer>
-      <v-btn icon @click.stop="themeDark = !themeDark">
+      <v-btn icon @click.stop="settings.view.themeDark = !settings.view.themeDark">
         <v-icon>invert_colors</v-icon>
       </v-btn>
-      <v-menu bottom left :close-on-content-click="false" v-model="menu">
+      <v-menu bottom left :close-on-content-click="false" v-model="showMenu">
         <v-btn icon slot="activator">
           <v-icon>menu</v-icon>
         </v-btn>
@@ -46,7 +46,7 @@
         <v-btn color="pink" flat @click="showSnackbar = false">Close</v-btn>
       </v-snackbar>
     </v-content>
-    <v-footer :fixed="fixed" app class="justify-center">
+    <v-footer app class="justify-center">
       <v-spacer></v-spacer>
       <span>Download to</span>
       <v-text-field id="fileNameBox" single-line :value="title"></v-text-field>
@@ -60,7 +60,8 @@ import ImageGrid from './ImageGrid';
 import FilterPanel from './FilterPanel';
 import OptionPanel from './OptionPanel';
 import gDownloader from '../model/downloader';
-import { initData, getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
+import gSettingManager from '../model/setting';
+import { getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
 
 export default {
   name: 'ImagePicker',
@@ -79,30 +80,9 @@ export default {
     console.log('Created ImagePicker with %d images', this.$store.state.images.length);
     this.title = this.$store.state.tabTitle;
     this.session = new ImageViewSession(this.$store.state.images, this.title, this.$store.state.tabUrl);
-    this.settings = {
-      view: {
-        showImageName: true,
-        showImageMeta: true,
-        showImageUrl: true,
-        viewMode: 'Thumbnail', // Options: "Thumbnail", "FitWidth", "Percent100"
-        thumbnailWidth: 240,
-      },
-      filter: {
-        sizeLimit: { min: 20, max: null, includedUnknown: true },
-        widthLimit: { min: 20, max: null, includedUnknown: true },
-        heightLimit: { min: 20, max: null, includedUnknown: true },
-      },
-    };
 
     // Load settings
-    chrome.storage.sync.get(['ImagePickerSettings'], result => {
-      if (result.ImagePickerSettings) {
-        this.settings = result.ImagePickerSettings;
-        console.log('Loaded ImagePicker Settings: %o', this.settings);
-      } else {
-        console.log('No ImagePicker Settings found. %o', result);
-      }
-
+    this.settings = gSettingManager.loadSettings((loadedSetting, hasUpdate) => {
       // init filter
       let allImages = this.session.allImages;
       let domainData = getImageDomains(allImages);
@@ -128,12 +108,9 @@ export default {
       selectedImageCount: 0,
       unselectedImageCount: 0,
       showSnackbar: false,
+      showMenu: false,
+      showDrawer: true,
       message: '',
-      themeDark: true,
-      clipped: false,
-      drawer: true,
-      menu: false,
-      fixed: false,
       title: '',
     };
   },
@@ -147,17 +124,12 @@ export default {
       this.filter.sizeLimit.copyTo(this.settings.filter.sizeLimit);
       this.filter.widthLimit.copyTo(this.settings.filter.widthLimit);
       this.filter.heightLimit.copyTo(this.settings.filter.heightLimit);
-      console.log('Saving ImagePicker Settings. %o', this.settings);
-      chrome.storage.sync.set({ ImagePickerSettings: this.settings }, () => {
-        console.log('Saved ImagePicker Settings.');
-      });
+
+      gSettingManager.saveSettings();
     },
 
     onSettingChange: function() {
-      console.log('Saving ImagePicker Settings. %o', this.settings);
-      chrome.storage.sync.set({ ImagePickerSettings: this.settings }, () => {
-        console.log('Saved ImagePicker Settings.');
-      });
+      gSettingManager.saveSettings();
     },
 
     onImageClicked: function(event) {
