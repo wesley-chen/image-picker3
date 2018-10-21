@@ -38,6 +38,15 @@
                     <v-radio label="100%" value="Percent100"></v-radio>
                 </v-radio-group>
             </v-list-tile>
+            <v-list-tile v-if="settings.view.viewMode == 'Thumbnail'">
+                <v-slider
+                    v-model="settings.view.thumbnailWidth"
+                    thumb-label
+                    min="50"
+                    max="1000"
+                    label="Thumbnail Size"
+                ></v-slider>
+            </v-list-tile>
         </v-list>
     </v-card>
 </template>

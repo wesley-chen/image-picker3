@@ -1,9 +1,9 @@
 <template>
   <v-container fluid>
-    <v-layout row fill-height wrap="true">
+    <v-layout :row="isThumbnail" :column="!isThumbnail" wrap="true">
       <v-flex v-for="img in images" :key="img.id">
         <div @click="$emit('image-clicked', img.id)">
-          <ImageBox :image="img" :boxWidth="240" :settings="settings"/>
+          <ImageBox :image="img" :settings="settings"/>
         </div>
       </v-flex>
     </v-layout>
@@ -26,6 +26,12 @@ export default {
   },
   components: {
     ImageBox,
+  },
+
+  computed: {
+    isThumbnail: function() {
+      return this.settings.view.viewMode == 'Thumbnail';
+    },
   },
 };
 </script>

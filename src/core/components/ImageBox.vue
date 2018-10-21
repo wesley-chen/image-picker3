@@ -36,10 +36,7 @@ export default {
       type: Object,
       required: true,
     },
-    boxWidth: {
-      type: Number,
-      required: true,
-    },
+
     settings: {
       type: Object,
       required: true,
@@ -49,8 +46,9 @@ export default {
   computed: {
     cardStyle: function() {
       // Display as Thumbnail by default
+      const thumbWidth = this.settings.view.thumbnailWidth;
       let style = {
-        width: this.boxWidth + 'px',
+        width: thumbWidth + 'px',
       };
 
       if (this.settings.view.viewMode != 'Thumbnail') {
@@ -62,14 +60,18 @@ export default {
     },
 
     boxStyle: function() {
-      return {};
+      const thumbWidth = this.settings.view.thumbnailWidth;
+      return {
+        'min-width': thumbWidth + 'px',
+        'min-height': thumbWidth + 'px',
+      };
     },
 
     imageStyle: function() {
       const img = this.image;
-
-      var imageRate = this.boxWidth / Math.max(img.width, img.height, 1);
-      if (imageRate > 1 || this.settings.view.viewMode == 'Percent100') {
+      const thumbWidth = this.settings.view.thumbnailWidth;
+      var imageRate = thumbWidth / Math.max(img.width, img.height, 1);
+      if (imageRate > 1 || this.settings.view.viewMode != 'Thumbnail') {
         // for small image, no change
         imageRate = 1;
       }
@@ -100,7 +102,7 @@ export default {
 
 .ip-imageBox {
   display: flex;
-  min-height: 100px;
+
   align-items: center;
 }
 .ip-image {
