@@ -1,6 +1,6 @@
 import store from './store';
 
-alert(`Hello ${store.getters.title}!`);
+//alert(`Hello ${store.getters.title}!`);
 
 console.log('ImagePicker started.');
 
