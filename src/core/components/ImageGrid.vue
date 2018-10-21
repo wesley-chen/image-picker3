@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout :row="isThumbnail" :column="!isThumbnail" wrap="true">
       <v-flex v-for="img in images" :key="img.id">
-        <div @click="$emit('image-clicked', img.id)">
+        <div @click="$emit('image-clicked', img.id, $event)">
           <ImageBox :image="img" :settings="settings"/>
         </div>
       </v-flex>

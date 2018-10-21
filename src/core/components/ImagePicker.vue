@@ -138,8 +138,16 @@ export default {
       }
     },
 
-    onImageClicked: function(event) {
-      let imageId = event;
+    onImageClicked: function(imageId, event) {
+      let likeOps = this.settings.behavior.likeImage;
+      if (likeOps == 'CtrlClick' && !event.ctrlKey) {
+        return;
+      } else if (likeOps == 'AltClick' && !event.altKey) {
+        return;
+      } else if (likeOps == 'ShiftClick' && !event.shiftKey) {
+        return;
+      }
+
       let image = this.session.allImages.find(x => x.id == imageId);
 
       if (image == null) {

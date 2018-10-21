@@ -52,6 +52,36 @@
                     label="Thumbnail Size"
                 ></v-slider>
             </v-list-tile>
+            <v-divider></v-divider>
+            <v-subheader>Behavior</v-subheader>
+            <v-list-tile>
+                <v-layout row align-baseline justify-start fill-height>
+                    <v-flex>
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                <v-tooltip top>
+                                    <span slot="activator">Like Image</span>
+                                    <span>In the "Selected" tab, ignore image to download by click with key.
+                                        <br>In the "UnSelected" tab, add image to download by click with key.
+                                    </span>
+                                </v-tooltip>
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-flex>
+                    <v-flex>
+                        <v-select
+                            v-model="settings.behavior.likeImage"
+                            @change="$emit('setting-change', 'likeImage')"
+                            :items="likeImageOptions"
+                            item-text="label"
+                            item-value="value"
+                            single-line
+                            class="ip-likeImageSelect"
+                        ></v-select>
+                        <v-spacer></v-spacer>
+                    </v-flex>
+                </v-layout>
+            </v-list-tile>
         </v-list>
     </v-card>
 </template>
@@ -64,5 +94,22 @@ export default {
       required: true,
     },
   },
+
+  data() {
+    return {
+      likeImageOptions: [
+        { label: 'Click Only', value: 'ClickOnly' },
+        { label: 'Ctrl + Click', value: 'CtrlClick' },
+        { label: 'Alt + Click', value: 'AltClick' },
+        { label: 'Shift + Click', value: 'ShiftClick' },
+      ],
+    };
+  },
 };
 </script>
+
+<style>
+.ip-likeImageSelect {
+  width: 180px;
+}
+</style>

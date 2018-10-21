@@ -14,6 +14,9 @@ class SettingManager {
         widthLimit: { min: 20, max: null, includedUnknown: true },
         heightLimit: { min: 20, max: null, includedUnknown: true },
       },
+      behavior: {
+        likeImage: 'ClickOnly', // Options: "ClickOnly", "CtrlClick", "AltClick", "ShiftClick"
+      },
     };
   }
 
@@ -25,6 +28,7 @@ class SettingManager {
         let chormeSettings = result.ImagePickerSettings;
         Object.assign(this.settings.view, chormeSettings.view);
         Object.assign(this.settings.filter, chormeSettings.filter);
+        Object.assign(this.settings.behavior, chormeSettings.behavior);
         console.log('Loaded ImagePicker Settings: %o', this.settings);
         let hasUpdate = true;
         callback(this.settings, hasUpdate);
