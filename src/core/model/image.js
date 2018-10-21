@@ -84,11 +84,13 @@ class ImageViewSession {
   }
 
   addLikeImages(image) {
+    image.like = true;
     this.userLikeImages.add(image);
     this.userUnLikeImages.delete(image);
   }
 
   addUnLikeImages(image) {
+    image.like = false;
     this.userUnLikeImages.add(image);
     this.userLikeImages.delete(image);
   }

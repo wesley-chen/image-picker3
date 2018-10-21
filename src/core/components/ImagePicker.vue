@@ -41,9 +41,9 @@
       >
         <v-icon>cloud_download</v-icon>
       </v-btn>
-      <v-snackbar v-model="showSnackbar" top right>
+      <v-snackbar v-model="showSnackbar" vertical top :timeout="2000">
         {{ message }}
-        <v-btn color="pink" flat @click="showSnackbar = false">Close</v-btn>
+        <v-btn color="pink" flat @click="undoSnackbarFunc">Undo</v-btn>
       </v-snackbar>
     </v-content>
     <v-footer app class="justify-center">
@@ -110,6 +110,7 @@ export default {
       selectedImageCount: 0,
       unselectedImageCount: 0,
       showSnackbar: false,
+      undoSnackbarFunc: null,
       showMenu: false,
       showDrawer: true,
       message: '',
@@ -148,10 +149,18 @@ export default {
       if (this.activeTabIdx == 0) {
         // on Selected tab
         this.session.addUnLikeImages(image);
-        this.showMessage(`Moved image: ${image.fileFullName} to Unselected tab.`);
+        this.undoSnackbarFunc = () => {
+          this.session.addLikeImages(image);
+          this.showTab(this.activeTabIdx);
+        };
+        this.showMessage(`Igone image: ${image.fileFullName} for download.`);
       } else {
         this.session.addLikeImages(image);
-        this.showMessage(`Added image: ${image.fileFullName} to Selected tab.`);
+        this.undoSnackbarFunc = () => {
+          this.session.addUnLikeImages(image);
+          this.showTab(this.activeTabIdx);
+        };
+        this.showMessage(`Like image: ${image.fileFullName}. It will be always selected for download.`);
       }
       this.showTab(this.activeTabIdx);
     },

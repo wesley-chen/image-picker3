@@ -13,7 +13,11 @@
           :style="imageStyle"
           contain
           :aspect-ratio="image.width/image.height"
-        />
+        >
+          <div v-if="image.like != null">
+            <v-icon color="pink" v-html="image.like ?  'favorite': 'close'"></v-icon>
+          </div>
+        </v-img>
       </div>
       <v-card-title v-if="showCaption">
         <v-layout column>
