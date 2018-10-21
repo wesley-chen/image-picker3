@@ -21,7 +21,7 @@
       <v-btn icon @click.stop="changeTheme">
         <v-icon>invert_colors</v-icon>
       </v-btn>
-      <v-menu bottom left :close-on-content-click="false" v-model="showMenu">
+      <v-menu bottom left absolute :close-on-content-click="false" v-model="showMenu">
         <v-btn icon slot="activator">
           <v-icon>menu</v-icon>
         </v-btn>
@@ -92,6 +92,8 @@ export default {
       let heightLimit = new RangeLimit(this.settings.filter.heightLimit);
       this.filter = new Filter(domainData, typeData, sizeLimit, widthLimit, heightLimit);
 
+      this.showDrawer = !(this.settings.view.viewMode == 'Percent100');
+
       // Show the selected image after init
       this.showTab(0);
     });
@@ -128,8 +130,11 @@ export default {
       gSettingManager.saveSettings();
     },
 
-    onSettingChange: function() {
+    onSettingChange: function(changedSettingName) {
       gSettingManager.saveSettings();
+      if (changedSettingName == 'viewMode') {
+        this.showDrawer = !(this.settings.view.viewMode == 'Percent100');
+      }
     },
 
     onImageClicked: function(event) {
