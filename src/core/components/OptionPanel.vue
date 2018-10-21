@@ -34,7 +34,7 @@
             <v-list-tile>
                 <v-radio-group v-model="settings.view.viewMode" row>
                     <v-radio label="Thumbnail" value="Thumbnail"></v-radio>
-                    <v-radio label="FitWidth" value="FitWidth"></v-radio>
+                    <v-radio label="Fit to Width" value="FitWidth"></v-radio>
                     <v-radio label="100%" value="Percent100"></v-radio>
                 </v-radio-group>
             </v-list-tile>
