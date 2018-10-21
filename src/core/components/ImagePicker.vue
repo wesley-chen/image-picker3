@@ -3,7 +3,7 @@
     <v-navigation-drawer persistent enable-resize-watcher fixed app v-model="showDrawer">
       <FilterPanel :filter="filter" v-on:filter-change="onFilterChange"/>
     </v-navigation-drawer>
-    <v-toolbar app clipped-left="false">
+    <v-toolbar app :clipped-left="false">
       <v-btn icon @click.stop="showDrawer = !showDrawer">
         <v-icon v-html="showDrawer ?  'chevron_left': 'chevron_right'"></v-icon>
       </v-btn>
@@ -18,7 +18,7 @@
         </v-tab>
       </v-tabs>
       <v-spacer></v-spacer>
-      <v-btn icon @click.stop="settings.view.themeDark = !settings.view.themeDark">
+      <v-btn icon @click.stop="changeTheme">
         <v-icon>invert_colors</v-icon>
       </v-btn>
       <v-menu bottom left :close-on-content-click="false" v-model="showMenu">
@@ -149,6 +149,11 @@ export default {
         this.showMessage(`Added image: ${image.fileFullName} to Selected tab.`);
       }
       this.showTab(this.activeTabIdx);
+    },
+
+    changeTheme: function() {
+      this.settings.view.themeDark = !this.settings.view.themeDark;
+      gSettingManager.saveSettings();
     },
 
     showTab: function(tabIdx) {

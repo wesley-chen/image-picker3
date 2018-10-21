@@ -32,7 +32,11 @@
             <v-divider></v-divider>
             <v-subheader>View Mode</v-subheader>
             <v-list-tile>
-                <v-radio-group v-model="settings.view.viewMode" row>
+                <v-radio-group
+                    row
+                    v-model="settings.view.viewMode"
+                    @change="$emit('setting-change')"
+                >
                     <v-radio label="Thumbnail" value="Thumbnail"></v-radio>
                     <v-radio label="Fit to Width" value="FitWidth"></v-radio>
                     <v-radio label="100%" value="Percent100"></v-radio>
@@ -41,6 +45,7 @@
             <v-list-tile v-if="settings.view.viewMode == 'Thumbnail'">
                 <v-slider
                     v-model="settings.view.thumbnailWidth"
+                    @change="$emit('setting-change')"
                     thumb-label
                     min="50"
                     max="1000"
