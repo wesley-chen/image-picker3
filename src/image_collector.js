@@ -111,12 +111,13 @@ class ImageCollector {
   addListener(imageElements) {
     for (let i = 0; i < imageElements.length; i++) {
       let imgElement = imageElements[i];
+      let image = this.convertImage(imgElement, 0);
+
       console.log('Adding event to %s', imgElement.src);
       imgElement.addEventListener('click', function(event) {
-        alert('Click ' + imgElement.src);
         chrome.runtime.sendMessage({
           type: 'SingleDownload',
-          src: imgElement.src,
+          image,
           event: {
             click: true,
             ctrlKey: event.ctrlKey,

@@ -1,5 +1,6 @@
 import store from './store';
 import gDownloader from './core/model/downloader';
+import { Image } from './core/model';
 
 alert(`Hello ${store.getters.title}!`);
 
@@ -18,17 +19,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 chrome.runtime.onMessage.addListener(function(message, sender) {
   console.log('Received: %o', message);
   if (message.type == 'SingleDownload') {
-    const src = message.src;
+    const img = message.image;
     const tabUrl = sender.tab.url;
     const tabTitle = sender.tab.title;
-    const payload = {
-      src,
-      tabTitle,
-      tabUrl,
-    };
+
+    // alert('Saving ' + img.src);
 
     gDownloader.init(tabTitle);
-    console.log('Saving %d images to %s', this.images.length, gDownloader.downloadFolder);
-    gDownloader.download(this.images, this.session.tabUrl);
+    console.log('Saving %s images to %s', img.src, gDownloader.downloadFolder);
+    gDownloader.download([new Image(img)], tabUrl);
   }
 });
