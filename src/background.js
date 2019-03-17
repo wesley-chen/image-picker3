@@ -17,7 +17,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   });
 });
 
-// const gSavedTabUrls = [];
+gSettingManager.loadSettings((loadedSetting, hasUpdate) => {});
+
 chrome.runtime.onMessage.addListener(function(message, sender) {
   console.log('Received: %o', message);
   if (message.type == 'SingleDownload') {
@@ -31,8 +32,9 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
 
     let needSave = false;
     // Load setting
-    const gSettings = gSettingManager.loadSettings((loadedSetting, hasUpdate) => {});
-    const action = gSettings.sinlgeDownload.action;
+    let settings = gSettingManager.settings;
+
+    const action = settings.sinlgeDownload.action;
     if (action == 'CtrlClick' && event.ctrlKey && event.click) {
       needSave = true;
     } else if (action == 'ShiftClick' && event.shiftKey && event.click) {
@@ -55,9 +57,9 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
     // gSavedTabUrls.push(tabUrl);
     // alert('Saving ' + img.src);
     if (needSave) {
-      const folderName = gSettings.sinlgeDownload.createSubFolderByTitle ? tabTitle : '';
+      console.log('Check ImagePicker Settings. %o', settings);
+      const folderName = settings.sinlgeDownload.createSubFolderByTitle ? tabTitle : '';
       gDownloader.init(folderName);
-      console.log('Saving %o images to %s', img, gDownloader.downloadFolder);
       gDownloader.download([new Image(img)], tabUrl);
     }
   }

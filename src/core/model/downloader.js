@@ -2,19 +2,22 @@ import { toValidFileName } from './utils';
 
 class Downloader {
   constructor() {
-    this.downloaderIdSet = new Set();
-    this.downloadFolder == null;
+    // This is a name holder
+    this.downloadFolder = { name: null };
   }
 
   init(downloadFolderName) {
     const validFolder = toValidFileName(downloadFolderName);
-    const downloaderIdSetForCallBack = this.downloaderIdSet;
 
-    if (this.downloadFolder == null) {
+    if (this.downloadFolder.name == null) {
       // First init (Chrome allow 1 addListener() call only)
-
+      this.downloadFolder.name = validFolder;
+      const folderNameHolder = this.downloadFolder;
       chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-        const filePath = validFolder + '/' + item.filename;
+        let filePath = item.filename;
+        if (folderNameHolder.name && folderNameHolder.name != '') {
+          filePath = folderNameHolder.name + '/' + item.filename;
+        }
         suggest({
           filename: filePath,
           conflictAction: 'uniquify',
@@ -22,7 +25,8 @@ class Downloader {
       });
     }
 
-    this.downloadFolder = validFolder;
+    // Update the name attribute every time
+    this.downloadFolder.name = validFolder;
   }
 
   download(images, refer) {
@@ -42,23 +46,18 @@ class Downloader {
       ['blocking', 'requestHeaders']
     );
 
-    const downloadFolderForCallBack = this.downloadFolder;
-    const downloaderIdSetForCallBack = this.downloaderIdSet;
-
-    console.log('Saving %d images to %s', images.length, this.downloadFolder);
+    console.log('Saving %d images to %s', images.length, this.downloadFolder.name);
 
     images.forEach(img => {
-      const filePath = 'abc/' + img.fileFullName;
-      console.log('Saving image %s to %s from %s ', filePath, downloadFolderForCallBack, img.src);
       chrome.downloads.download(
         {
           url: img.src,
-          filename: filePath,
+          filename: img.fileFullName,
           saveAs: false,
           conflictAction: 'uniquify',
         },
         function(downloadId) {
-          downloaderIdSetForCallBack.add(downloadId);
+          console.log('Saved image: %s', img.src);
         }
       );
     });
