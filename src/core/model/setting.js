@@ -17,6 +17,12 @@ class SettingManager {
       behavior: {
         likeImage: 'ClickOnly', // Options: "ClickOnly", "CtrlClick", "AltClick", "ShiftClick"
       },
+      sinlgeDownload: {
+        action: 'ClickOnly', // Options: "ClickOnly", "CtrlClick", "AltClick", "ShiftClick", "Drag"
+        createSubFolderByTitle: true,
+        askLocationForNewTab: true, // It seems Chrome doesn't support Folder Picker!!!
+        askLocationWhenDragLeft: true, // It seems Chrome doesn't support Folder Picker!!!
+      },
     };
   }
 
@@ -29,6 +35,7 @@ class SettingManager {
         Object.assign(this.settings.view, chormeSettings.view);
         Object.assign(this.settings.filter, chormeSettings.filter);
         Object.assign(this.settings.behavior, chormeSettings.behavior);
+        Object.assign(this.settings.sinlgeDownload, chormeSettings.sinlgeDownload);
         console.log('Loaded ImagePicker Settings: %o', this.settings);
         let hasUpdate = true;
         callback(this.settings, hasUpdate);
