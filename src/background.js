@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
     // alert('Saving ' + img.src);
 
     gDownloader.init(tabTitle);
-    console.log('Saving %s images to %s', img.src, gDownloader.downloadFolder);
+    console.log('Saving %o images to %s', img, gDownloader.downloadFolder);
     gDownloader.download([new Image(img)], tabUrl);
   }
 });

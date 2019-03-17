@@ -114,16 +114,47 @@ class ImageCollector {
       let image = this.convertImage(imgElement, 0);
 
       console.log('Adding event to %s', imgElement.src);
+
+      // listen to Click event
       imgElement.addEventListener('click', function(event) {
+        image.event = {
+          click: true,
+          ctrlKey: event.ctrlKey,
+          altKey: event.altKey,
+          shiftKey: event.shiftKey,
+          fromX: 0,
+          fromY: 0,
+          toX: 0,
+          toY: 0,
+        };
+        console.log('clicked image: %s', imgElement.src);
         chrome.runtime.sendMessage({
           type: 'SingleDownload',
           image,
-          event: {
-            click: true,
-            ctrlKey: event.ctrlKey,
-            altKey: event.altKey,
-            shiftKey: event.shiftKey,
-          },
+        });
+      });
+
+      // listen to OnDragStart event
+      imgElement.addEventListener('dragstart', function(event) {
+        image.event = {
+          click: false,
+          ctrlKey: event.ctrlKey,
+          altKey: event.altKey,
+          shiftKey: event.shiftKey,
+          fromX: event.screenX,
+          fromY: event.screenY,
+        };
+      });
+
+      // listen to OnDragEnd event
+      imgElement.addEventListener('dragend', function(event) {
+        image.event.toX = event.screenX;
+        image.event.toY = event.screenY;
+
+        console.log('dragged image: %s', imgElement.src);
+        chrome.runtime.sendMessage({
+          type: 'SingleDownload',
+          image,
         });
       });
     }
