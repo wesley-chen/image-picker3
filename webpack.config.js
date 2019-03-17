@@ -10,8 +10,8 @@ const config = {
   mode: process.env.NODE_ENV,
   context: __dirname + '/src',
   entry: {
-    'background': './background.js',
-    'send_images': './send_images.js',
+    background: './background.js',
+    image_collector: './image_collector.js',
     'popup/popup': './popup/popup.js',
     'options/options': './options/options.js',
   },
@@ -54,15 +54,17 @@ const config = {
       },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'fonts/',
-            publicPath: './../fonts/'
-          }
-        }]
-      }
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/',
+              publicPath: './../fonts/',
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
@@ -78,7 +80,7 @@ const config = {
       {
         from: 'manifest.json',
         to: 'manifest.json',
-        transform: (content) => {
+        transform: content => {
           const jsonContent = JSON.parse(content);
           jsonContent.version = version;
 
@@ -107,9 +109,7 @@ if (config.mode === 'production') {
 }
 
 if (process.env.HMR === 'true') {
-  config.plugins = (config.plugins || []).concat([
-    new ChromeExtensionReloader(),
-  ]);
+  config.plugins = (config.plugins || []).concat([new ChromeExtensionReloader()]);
 }
 
 module.exports = config;
