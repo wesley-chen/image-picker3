@@ -1,4 +1,5 @@
 import { toValidFileName } from './utils';
+const EXTENSION_NAME = 'Image Picker v3';
 
 class Downloader {
   constructor() {
@@ -14,6 +15,11 @@ class Downloader {
       this.downloadFolder.name = validFolder;
       const folderNameHolder = this.downloadFolder;
       chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
+        console.log('DownloadItem %o', item);
+        if (item.byExtensionName != EXTENSION_NAME) {
+          return;
+        }
+
         let filePath = item.filename;
         if (folderNameHolder.name && folderNameHolder.name != '') {
           filePath = folderNameHolder.name + '/' + item.filename;
