@@ -47,7 +47,9 @@ class Image {
       req.responseType = 'blob';
       req.onload = () => {
         let imgType = req.getResponseHeader('Content-Type').split('/')[1];
-        let imgSize = parseInt(req.getResponseHeader('Content-Length'), 10);
+        // FIXME: Below line cause the "Refused to get unsafe header "Content-Length" error.
+        // let imgSize = parseInt(req.getResponseHeader('Content-Length'), 10);
+        let imgSize = this.width * this.height;
 
         resolve({
           imgType,
