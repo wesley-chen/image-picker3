@@ -89,6 +89,10 @@ function getImageTypes(images) {
  * @return {String} a valid directory/file name for the given originalName
  */
 function toValidFileName(originalName) {
+  if (!originalName) {
+    return '';
+  }
+
   var validName = originalName;
 
   // replace special char: [,\,/,:,*,.,?,",<,>,|,]
