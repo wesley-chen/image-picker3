@@ -13,7 +13,7 @@ let gOpenerTabTabId = ''; // the tab that open this popup.
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   // Only process the message that sent from the opener tab
-  if (sender.tab.id == gOpenerTabTabId && message.type == 'BatchDownload') {
+  if (sender.tab.id == gOpenerTabTabId && message.type == 'ViewImages') {
     const receivedImages = message.images;
     const tabUrl = sender.tab.url;
     const tabTitle = sender.tab.title;

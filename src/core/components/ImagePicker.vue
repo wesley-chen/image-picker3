@@ -49,7 +49,7 @@
     <v-footer app class="justify-center">
       <v-spacer></v-spacer>
       <span>Download to</span>
-      <v-text-field id="fileNameBox" single-line :value="title"></v-text-field>
+      <v-text-field id="fileNameBox" single-line v-model="title"></v-text-field>
       <v-spacer></v-spacer>
     </v-footer>
   </v-app>
@@ -59,7 +59,7 @@
 import ImageGrid from './ImageGrid';
 import FilterPanel from './FilterPanel';
 import OptionPanel from './OptionPanel';
-import gDownloader from '../model/downloader';
+//import gDownloader from '../model/downloader';
 import gSettingManager from '../model/setting';
 import { getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
 
@@ -98,7 +98,7 @@ export default {
       this.showTab(0);
     });
 
-    gDownloader.init(this.title);
+    //gDownloader.init(this.title);
   },
 
   data() {
@@ -196,8 +196,13 @@ export default {
     },
 
     saveImages: function() {
-      this.showMessage('Saving %d images to %s', this.images.length, gDownloader.downloadFolder);
-      gDownloader.download(this.images, this.session.tabUrl);
+      this.showMessage('Saving %d images to %s', this.images.length, this.title);
+      chrome.runtime.sendMessage({
+        type: 'BatchDownload',
+        images: this.images,
+        tabUrl: this.session.tabUrl,
+        savedfolderName: this.title,
+      });
     },
 
     showMessage: function(message) {

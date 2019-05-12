@@ -57,7 +57,7 @@ class ImageCollector {
     if (images.length > 0) {
       console.log('Sending %d images from %s ', images.length, document.title);
       chrome.runtime.sendMessage({
-        type: 'BatchDownload',
+        type: 'ViewImages',
         images: images,
       });
     }

@@ -21,6 +21,7 @@ gSettingManager.loadSettings((loadedSetting, hasUpdate) => {});
 
 chrome.runtime.onMessage.addListener(function(message, sender) {
   console.log('Received: %o', message);
+
   if (message.type == 'SingleDownload') {
     const img = message.image;
     const tabUrl = sender.tab.url;
@@ -62,5 +63,14 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
       gDownloader.init(folderName);
       gDownloader.download([new Image(img)], tabUrl);
     }
+  } else if (message.type == 'BatchDownload') {
+    const images = message.images;
+    const tabUrl = message.tabUrl;
+    const savedfolderName = message.savedfolderName;
+
+    gDownloader.init(savedfolderName);
+    gDownloader.download(images, tabUrl);
+
+    console.log('Download images: %o', images);
   }
 });
