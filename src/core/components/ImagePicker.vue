@@ -196,7 +196,7 @@ export default {
     },
 
     saveImages: function() {
-      this.showMessage('Saving %d images to %s', this.images.length, this.title);
+      this.showMessage('Saving ' + this.images.length + ' images to ' + this.title);
       chrome.runtime.sendMessage({
         type: 'BatchDownload',
         images: this.images,
