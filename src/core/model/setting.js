@@ -49,7 +49,7 @@ class SettingManager {
     return this.settings;
   }
 
-  saveSettings() {
+  save() {
     console.log('Saving ImagePicker Settings. %o', this.settings);
     chrome.storage.sync.set({ ImagePickerSettings: this.settings }, () => {
       console.log('Saved ImagePicker Settings.');
@@ -58,7 +58,7 @@ class SettingManager {
 
   saveSettings(newSettings) {
     this.settings = newSettings;
-    this.saveSettings();
+    this.save();
   }
 }
 
