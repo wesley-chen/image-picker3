@@ -1,7 +1,7 @@
 {
   "name": "Image Picker v3",
   "description": "Choose (filter) images and save images from web page to local disk.",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "manifest_version": 2,
   "icons": {
     "32": "icons/img-picker_32.png",

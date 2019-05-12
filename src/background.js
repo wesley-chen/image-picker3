@@ -3,7 +3,7 @@ import gDownloader from './core/model/downloader';
 import gSettingManager from './core/model/setting';
 import { Image } from './core/model';
 
-alert(`Hello ${store.getters.title}!`);
+// alert(`Hello ${store.getters.title}!`);
 
 console.log('ImagePicker started.');
 
