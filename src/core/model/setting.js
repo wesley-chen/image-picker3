@@ -55,6 +55,11 @@ class SettingManager {
       console.log('Saved ImagePicker Settings.');
     });
   }
+
+  saveSettings(newSettings) {
+    this.settings = newSettings;
+    this.saveSettings();
+  }
 }
 
 const instance = new SettingManager(); // export as singleton object

@@ -59,7 +59,6 @@
 import ImageGrid from './ImageGrid';
 import FilterPanel from './FilterPanel';
 import OptionPanel from './OptionPanel';
-//import gDownloader from '../model/downloader';
 import gSettingManager from '../model/setting';
 import { getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
 
@@ -97,8 +96,6 @@ export default {
       // Show the selected image after init
       this.showTab(0);
     });
-
-    //gDownloader.init(this.title);
   },
 
   data() {
@@ -128,11 +125,11 @@ export default {
       this.filter.widthLimit.copyTo(this.settings.filter.widthLimit);
       this.filter.heightLimit.copyTo(this.settings.filter.heightLimit);
 
-      gSettingManager.saveSettings();
+      this.saveSettings();
     },
 
     onSettingChange: function(changedSettingName) {
-      gSettingManager.saveSettings();
+      this.saveSettings();
       if (changedSettingName == 'viewMode') {
         this.showDrawer = !(this.settings.view.viewMode == 'Percent100');
       }
@@ -175,7 +172,14 @@ export default {
 
     changeTheme: function() {
       this.settings.view.themeDark = !this.settings.view.themeDark;
-      gSettingManager.saveSettings();
+      this.saveSettings();
+    },
+
+    saveSettings() {
+      chrome.runtime.sendMessage({
+        type: 'SaveSettings',
+        settings: this.settings,
+      });
     },
 
     showTab: function(tabIdx) {

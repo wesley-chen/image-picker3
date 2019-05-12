@@ -22,7 +22,9 @@ gSettingManager.loadSettings((loadedSetting, hasUpdate) => {});
 chrome.runtime.onMessage.addListener(function(message, sender) {
   console.log('Received: %o', message);
 
-  if (message.type == 'SingleDownload') {
+  if (message.type == 'SaveSettings') {
+    gSettingManager.saveSettings(message.settings);
+  } else if (message.type == 'SingleDownload') {
     const img = message.image;
     const tabUrl = sender.tab.url;
     const tabTitle = sender.tab.title;
