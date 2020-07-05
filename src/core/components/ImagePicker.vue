@@ -5,51 +5,33 @@
     </v-navigation-drawer>
 
     <v-app-bar app clipped-left>
-      <v-app-bar-nav-icon
-        @click.stop="showDrawer = !showDrawer"
-      ></v-app-bar-nav-icon>
-      <v-tabs
-        v-model="activeTabIdx"
-        centered
-        slider-color="yellow"
-        color="transparent"
-      >
-        <v-tab @click="showTab(0)">
-          Selected
-          <span>({{ this.selectedImageCount }})</span>
-        </v-tab>
-        <v-tab @click="showTab(1)">
-          UnSelected
-          <span>({{ this.unselectedImageCount }})</span>
-        </v-tab>
-      </v-tabs>
+      <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer"></v-app-bar-nav-icon>
+
       <v-spacer></v-spacer>
+
       <v-btn icon @click.stop="changeTheme">
         <v-icon>mdi-invert-colors</v-icon>
       </v-btn>
-      <v-menu
-        bottom
-        left
-        absolute
-        :close-on-content-click="false"
-        v-model="showMenu"
-      >
+
+      <v-menu bottom left absolute :close-on-content-click="false" v-model="showMenu">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
 
-        <OptionPanel
-          :settings="settings"
-          v-on:setting-change="onSettingChange"
-        />
+        <OptionPanel :settings="settings" v-on:setting-change="onSettingChange" />
       </v-menu>
     </v-app-bar>
 
     <v-main>
+      <v-subheader>Matched Images ({{ this.selectedImageCount }})</v-subheader>
+      <v-divider></v-divider>
+      <ImageGrid :images="selectedImages" v-on:image-clicked="onImageClicked" :settings="settings" />
+      <v-subheader>Ignore Images ({{ this.unselectedImageCount }})</v-subheader>
+      <v-divider></v-divider>
       <ImageGrid
-        :images="images"
+        :images="unselectedImages"
         v-on:image-clicked="onImageClicked"
         :settings="settings"
       />
@@ -138,7 +120,7 @@ export default {
       this.showDrawer = !(this.settings.view.viewMode == "Percent100");
 
       // Show the selected image after init
-      this.showTab(0);
+      this.categorizeImages();
     });
   },
 
@@ -146,7 +128,8 @@ export default {
     return {
       filter: Filter.createDefaultFilter(),
       settings: null,
-      images: [],
+      selectedImages: [],
+      unselectedImages: [],
       activeTabIdx: 0,
       selectedImageCount: 0,
       unselectedImageCount: 0,
@@ -161,7 +144,7 @@ export default {
 
   methods: {
     onFilterChange: function() {
-      this.showTab(0);
+      this.categorizeImages();
       this.activeTabIdx = 0;
 
       // Update settings
@@ -195,25 +178,22 @@ export default {
         this.showMessage(`Image: ${imageId} not found`);
       }
 
-      if (this.activeTabIdx == 0) {
+      if (image.like) {
         // on Selected tab
         this.session.addUnLikeImages(image);
         this.undoSnackbarFunc = () => {
           this.session.addLikeImages(image);
-          this.showTab(this.activeTabIdx);
         };
         this.showMessage(`Igone image: ${image.fileFullName} for download.`);
       } else {
         this.session.addLikeImages(image);
         this.undoSnackbarFunc = () => {
           this.session.addUnLikeImages(image);
-          this.showTab(this.activeTabIdx);
         };
         this.showMessage(
           `Like image: ${image.fileFullName}. It will be always selected for download.`
         );
       }
-      this.showTab(this.activeTabIdx);
     },
 
     changeTheme: function() {
@@ -229,26 +209,22 @@ export default {
       });
     },
 
-    showTab: function(tabIdx) {
-      if (tabIdx == 0) {
-        // The selected tab
-        let filteredImages = this.filter.filter(this.session.allImages);
-        let imageData = this.session.getSelectedImages(filteredImages);
-        this.images = imageData.images;
-        this.selectedImageCount = imageData.selectedCount;
-        this.unselectedImageCount = imageData.unselectedCount;
-      } else {
-        let filteredImages = this.filter.filter(this.session.allImages);
-        let imageData = this.session.getUnSelectedImages(filteredImages);
-        this.images = imageData.images;
-        this.selectedImageCount = imageData.selectedCount;
-        this.unselectedImageCount = imageData.unselectedCount;
-      }
+    categorizeImages: function() {
+      let filteredImages = this.filter.filter(this.session.allImages);
+
+      let imageData = this.session.getSelectedImages(filteredImages);
+      this.selectedImages = imageData.images;
+      this.selectedImageCount = imageData.selectedCount;
+
+      imageData = this.session.getUnSelectedImages(filteredImages);
+      this.unselectedImages = imageData.images;
+      this.unselectedImageCount = imageData.unselectedCount;
     },
 
     saveImages: function() {
+      this.categorizeImages();
       this.showMessage(
-        "Saving " + this.images.length + " images to " + this.title
+        "Saving " + this.selectedImageCount + " images to " + this.title
       );
       chrome.runtime.sendMessage({
         type: "BatchDownload",

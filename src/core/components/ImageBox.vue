@@ -13,22 +13,21 @@
           :style="imageStyle"
           contain
           :aspect-ratio="image.width / image.height"
-        >
-          <div v-if="image.like != null">
-            <v-icon
-              color="pink"
-              v-html="image.like ? 'favorite' : 'close'"
-            ></v-icon>
-          </div>
-        </v-img>
+        ></v-img>
       </div>
       <v-card-text v-if="showCaption">
-        <div v-if="settings.view.showImageName">
-          {{ image.fileName }}.{{ image.type }}
-        </div>
+        <div v-if="settings.view.showImageName">{{ image.fileName }}.{{ image.type }}</div>
         <div v-if="settings.view.showImageMeta">{{ imageMetaInfo }}</div>
         <div v-if="settings.view.showImageUrl">{{ image.src }}</div>
       </v-card-text>
+      <v-card-actions>
+        <v-btn icon v-if="imageSelected">
+          <v-icon color="primary">mdi-checkbox-marked</v-icon>
+        </v-btn>
+        <v-btn icon v-else>
+          <v-icon>mdi-checkbox-blank-outline</v-icon>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-hover>
 </template>
@@ -48,6 +47,13 @@ export default {
   },
 
   computed: {
+    imageSelected: function() {
+      if (this.image.like != null) {
+        return this.image.like;
+      } else {
+        return this.image.matched;
+      }
+    },
     imageMetaInfo: function() {
       return (
         this.image.width +

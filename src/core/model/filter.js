@@ -39,6 +39,11 @@ class Filter {
   }
 
   filter(images) {
+    // Reset status
+    images.forEach(img => {
+      img.matched = false;
+    });
+
     let selectedDomains = this.domains.filter(d => d.selected).map(d => d.name);
     let selectedTypes = this.imageTypes
       .filter(t => t.selected)
@@ -60,6 +65,9 @@ class Filter {
       .filter(img => selectedTypes.includes(img.type));
 
     //debugger;
+    selectedImages.forEach(img => {
+      img.matched = true;
+    });
 
     return selectedImages;
   }
