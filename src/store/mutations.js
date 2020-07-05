@@ -1,5 +1,5 @@
-import * as types from './mutation-types';
-import { Image } from '../core/model';
+import * as types from "./mutation-types";
+import { Image } from "../core/model";
 
 export default {
   [types.ADD_IMAGES](state, payload) {
@@ -7,5 +7,5 @@ export default {
     state.images.push(...imageList);
     state.tabTitle = payload.tabTitle;
     state.tabUrl = payload.tabUrl;
-  },
+  }
 };

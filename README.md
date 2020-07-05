@@ -1,33 +1,25 @@
-# image-picker3
+# image-picker v3
 
 ## Project setup
-
 ```
 yarn install
 ```
 
 ### Compiles and hot-reloads for development
-
 ```
-yarn watch:dev
+yarn serve
 ```
 
 ### Compiles and minifies for production
-
 ```
-yarn run build
+yarn build
 ```
-
-### Package
-
-```
-yarn run build-zip
-```
-
-Build a zip file following this format <name>-v<version>.zip, by reading name and version from manifest.json file. Zip file is located in dist-zip folder.
 
 ### Lints and fixes files
+```
+yarn lint
+```
 
-```
-yarn run lint
-```
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
+See [vue-cli-plugin-browser-extension](https://github.com/adambullmer/vue-cli-plugin-browser-extension)

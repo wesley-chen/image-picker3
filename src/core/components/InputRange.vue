@@ -1,30 +1,31 @@
 <template>
-      <v-layout row align-baseline justify-start fill-height>
-          <v-flex sm4 align-baseline>
-            {{title}}
-          </v-flex>
-          <v-flex sm3>
-            <v-text-field v-model.number="range.min" 
-                 @change="$emit('range-change')"
-                 class="input-range-num"
-                 hide-details single-line 
-                 :hint="minHint"
-                 type="number">     
-            </v-text-field> 
-          </v-flex>
-          <v-flex sm2 class="input-range-text">
-             - 
-          </v-flex>
-          <v-flex sm3>
-                <v-text-field v-model.number="range.max" 
-                    @change="$emit('range-change')"
-                    class="input-range-num"
-                     single-line 
-                    :hint="maxHint"
-                    type="number">     
-                </v-text-field> 
-          </v-flex>
-      </v-layout>     
+  <v-list-item>
+    <v-list-item-action>
+      <v-text-field
+        dense
+        style="font-size: 0.75rem; width:120px;"
+        v-model.number="range.min"
+        @change="$emit('range-change')"
+        :label="'Min ' + title"
+        type="number"
+        :suffix="unit"
+      ></v-text-field>
+    </v-list-item-action>
+    <v-list-item-action>
+      <v-text-field
+        dense
+        style="font-size: 0.75rem; width:120px;"
+        v-model.number="range.max"
+        @change="$emit('range-change')"
+        :label="'Max ' + title"
+        type="number"
+        :suffix="unit"
+      ></v-text-field>
+    </v-list-item-action>
+    <v-list-item-content>
+      <v-list-item-title v-text="title" />
+    </v-list-item-content>
+  </v-list-item>
 </template>
 
 <script>
@@ -32,33 +33,25 @@ export default {
   props: {
     range: {
       type: Object,
-      required: true,
+      required: true
     },
     title: {
       type: String,
-      required: true,
+      required: true
     },
     unit: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
 
   computed: {
     minHint: function() {
-      return 'The minimum value of ' + this.title + ' (' + this.unit + ')';
+      return "The minimum value of " + this.title + " (" + this.unit + ")";
     },
     maxHint: function() {
-      return 'The maximum value of ' + this.title + ' (' + this.unit + ')';
-    },
-  },
+      return "The maximum value of " + this.title + " (" + this.unit + ")";
+    }
+  }
 };
 </script>
-<style>
-.input-range-num input {
-  text-align: right;
-}
-.input-range-text {
-  text-align: center;
-}
-</style>

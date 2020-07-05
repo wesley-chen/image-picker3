@@ -1,41 +1,57 @@
 <template>
-    <v-list subheader>
+  <v-list>
+    <v-subheader>Domain</v-subheader>
 
-          <v-subheader >Domain</v-subheader>
+    <v-list-item v-for="domain in filter.domains" :key="domain.name">
+      <v-list-item-action>
+        <v-checkbox
+          v-model="domain.selected"
+          @change="$emit('filter-change')"
+        />
+      </v-list-item-action>
 
-          <v-list-tile v-for="domain in filter.domains" :key="domain.name" >
-                        <v-checkbox v-model="domain.selected" :label="domain.name" 
-                                    @change="$emit('filter-change')"/>
-                        <span class="grey--text">{{domain.count}}</span>   
-          </v-list-tile>
+      <v-list-item-content>
+        <v-list-item-subtitle v-text="domain.name" />
+      </v-list-item-content>
 
-          <v-subheader >Image Types</v-subheader>
+      <v-list-item-action>
+        <v-list-item-action-text v-text="domain.count" />
+      </v-list-item-action>
+    </v-list-item>
 
-          <v-list-tile v-for="(group, idx) in imageTypeGroups" :key="'Group-'+idx">
-                <v-layout row wrap >
-                    <v-flex sm4 v-for="imgType in group" :key="imgType.name">
-                        <v-checkbox v-model="imgType.selected" :label="imgType.name"
-                                    @change="$emit('filter-change')"
-                        ></v-checkbox>
-                    </v-flex>
-                </v-layout>
-          </v-list-tile>
-          
-          <v-subheader >Limits</v-subheader>
+    <v-subheader>Image Types</v-subheader>
 
-          <v-list-tile >
-             <InputRange title="Size" unit="KB" :range="filter.sizeLimit" @range-change="$emit('filter-change')"/>
-          </v-list-tile>
+    <v-list-item v-for="(group, idx) in imageTypeGroups" :key="'Group-' + idx">
+      <v-list-item-action v-for="imgType in group" :key="imgType.name">
+        <v-checkbox
+          v-model="imgType.selected"
+          :label="imgType.name"
+          @change="$emit('filter-change')"
+        />
+      </v-list-item-action>
+    </v-list-item>
 
-         <v-list-tile >
-            <InputRange title="Width" unit="px" :range="filter.widthLimit" @range-change="$emit('filter-change')"/>
-          </v-list-tile>
+    <v-subheader>Limits</v-subheader>
 
-          <v-list-tile >
-            <InputRange title="Height" unit="px" :range="filter.heightLimit" @range-change="$emit('filter-change')"/>
-          </v-list-tile>
-
-    </v-list>
+    <InputRange
+      title="Size"
+      unit="KB"
+      :range="filter.sizeLimit"
+      @range-change="$emit('filter-change')"
+    />
+    <InputRange
+      title="Width"
+      unit="px"
+      :range="filter.widthLimit"
+      @range-change="$emit('filter-change')"
+    />
+    <InputRange
+      title="Height"
+      unit="px"
+      :range="filter.heightLimit"
+      @range-change="$emit('filter-change')"
+    />
+  </v-list>
 </template>
 
 <script>
@@ -63,11 +79,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.v-subheader {
-  margin-top: 15px;
-}
-</style>
-
-

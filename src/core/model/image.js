@@ -11,7 +11,7 @@ class Image {
     this.domain = url.hostname;
 
     // Get file name from path
-    let reg = /([^\/('"\\]+)\.(\w+)/;
+    let reg = /([^/('"\\]+)\.(\w+)/;
     let result = reg.exec(url.pathname);
     if (result != null) {
       this.fileName = result[1];
@@ -28,11 +28,12 @@ class Image {
 
     // Use the last part as file name
     if (!this.fileName) {
-      let urlParts = url.pathname.split('/');
-      this.fileName = urlParts.length > 0 ? urlParts[urlParts.length - 1] : 'Unknown';
-      this.type = 'jpg'; // use JPG as the default file ext
+      let urlParts = url.pathname.split("/");
+      this.fileName =
+        urlParts.length > 0 ? urlParts[urlParts.length - 1] : "Unknown";
+      this.type = "jpg"; // use JPG as the default file ext
     }
-    this.fileFullName = this.fileName + '.' + this.type;
+    this.fileFullName = this.fileName + "." + this.type;
 
     // fetch file size from remote
     this.fileSize = 0;
@@ -43,10 +44,10 @@ class Image {
     const url = image.src;
     const loader = new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
-      req.open('GET', url);
-      req.responseType = 'blob';
+      req.open("GET", url);
+      req.responseType = "blob";
       req.onload = () => {
-        let imgType = req.getResponseHeader('Content-Type').split('/')[1];
+        let imgType = req.getResponseHeader("Content-Type").split("/")[1];
         // FIXME: Below line cause the "Refused to get unsafe header "Content-Length" error.
         // let imgSize = parseInt(req.getResponseHeader('Content-Length'), 10);
         let imgSize = this.width * this.height;
@@ -54,7 +55,7 @@ class Image {
         resolve({
           imgType,
           imgSize,
-          response: req.response,
+          response: req.response
         });
       };
 
@@ -71,7 +72,11 @@ class Image {
         image.fileSize = result.imgSize;
       })
       .catch(function(error) {
-        console.warn('Loaded image failed! URL=%s, Error: %s', image.src, error);
+        console.warn(
+          "Loaded image failed! URL=%s, Error: %s",
+          image.src,
+          error
+        );
       });
   }
 }
@@ -104,7 +109,7 @@ class ImageViewSession {
     return {
       images: Array.from(images),
       selectedCount: images.size,
-      unselectedCount: this.allImages.length - images.size,
+      unselectedCount: this.allImages.length - images.size
     };
   }
 
@@ -116,7 +121,7 @@ class ImageViewSession {
     return {
       images: Array.from(images),
       selectedCount: this.allImages.length - images.size,
-      unselectedCount: images.size,
+      unselectedCount: images.size
     };
   }
 }

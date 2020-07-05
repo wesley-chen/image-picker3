@@ -1,35 +1,58 @@
 <template>
-  <v-app persistent :dark="settings.view.themeDark">
-    <v-navigation-drawer persistent enable-resize-watcher fixed app v-model="showDrawer">
-      <FilterPanel :filter="filter" v-on:filter-change="onFilterChange"/>
+  <v-app persistent>
+    <v-navigation-drawer app clipped v-model="showDrawer">
+      <FilterPanel :filter="filter" v-on:filter-change="onFilterChange" />
     </v-navigation-drawer>
-    <v-toolbar app :clipped-left="false">
-      <v-btn icon @click.stop="showDrawer = !showDrawer">
-        <v-icon v-html="showDrawer ?  'chevron_left': 'chevron_right'"></v-icon>
-      </v-btn>
-      <v-tabs v-model="activeTabIdx" centered slider-color="yellow" color="transparent">
+
+    <v-app-bar app clipped-left>
+      <v-app-bar-nav-icon
+        @click.stop="showDrawer = !showDrawer"
+      ></v-app-bar-nav-icon>
+      <v-tabs
+        v-model="activeTabIdx"
+        centered
+        slider-color="yellow"
+        color="transparent"
+      >
         <v-tab @click="showTab(0)">
           Selected
-          <span>({{this.selectedImageCount}})</span>
+          <span>({{ this.selectedImageCount }})</span>
         </v-tab>
         <v-tab @click="showTab(1)">
           UnSelected
-          <span>({{this.unselectedImageCount}})</span>
+          <span>({{ this.unselectedImageCount }})</span>
         </v-tab>
       </v-tabs>
       <v-spacer></v-spacer>
       <v-btn icon @click.stop="changeTheme">
-        <v-icon>invert_colors</v-icon>
+        <v-icon>mdi-invert-colors</v-icon>
       </v-btn>
-      <v-menu bottom left absolute :close-on-content-click="false" v-model="showMenu">
-        <v-btn icon slot="activator">
-          <v-icon>menu</v-icon>
-        </v-btn>
-        <OptionPanel :settings="settings" v-on:setting-change="onSettingChange"/>
+      <v-menu
+        bottom
+        left
+        absolute
+        :close-on-content-click="false"
+        v-model="showMenu"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+
+        <OptionPanel
+          :settings="settings"
+          v-on:setting-change="onSettingChange"
+        />
       </v-menu>
-    </v-toolbar>
-    <v-content>
-      <ImageGrid :images="images" v-on:image-clicked="onImageClicked" :settings="settings"/>
+    </v-app-bar>
+
+    <v-main>
+      <ImageGrid
+        :images="images"
+        v-on:image-clicked="onImageClicked"
+        :settings="settings"
+      />
       <v-btn
         fab
         fixed
@@ -39,13 +62,13 @@
         @click="saveImages()"
         v-show="activeTabIdx == 0"
       >
-        <v-icon>cloud_download</v-icon>
+        <v-icon>mdi-file-download</v-icon>
       </v-btn>
       <v-snackbar v-model="showSnackbar" vertical top :timeout="2000">
         {{ message }}
-        <v-btn color="pink" flat @click="undoSnackbarFunc">Undo</v-btn>
+        <v-btn color="pink" @click="undoSnackbarFunc">Undo</v-btn>
       </v-snackbar>
-    </v-content>
+    </v-main>
     <v-footer app class="justify-center">
       <v-spacer></v-spacer>
       <span>Download to</span>
@@ -56,14 +79,21 @@
 </template>
 
 <script>
-import ImageGrid from './ImageGrid';
-import FilterPanel from './FilterPanel';
-import OptionPanel from './OptionPanel';
-import gSettingManager from '../model/setting';
-import { getImageDomains, getImageTypes, toValidFileName, Filter, RangeLimit, ImageViewSession } from '../model';
+import ImageGrid from "./ImageGrid";
+import FilterPanel from "./FilterPanel";
+import OptionPanel from "./OptionPanel";
+import gSettingManager from "../model/setting";
+import {
+  getImageDomains,
+  getImageTypes,
+  toValidFileName,
+  Filter,
+  RangeLimit,
+  ImageViewSession
+} from "../model";
 
 export default {
-  name: 'ImagePicker',
+  name: "ImagePicker",
 
   session: null,
   filter: null,
@@ -72,13 +102,20 @@ export default {
   components: {
     ImageGrid,
     FilterPanel,
-    OptionPanel,
+    OptionPanel
   },
 
   created: function() {
-    console.log('Created ImagePicker with %d images', this.$store.state.images.length);
+    console.log(
+      "Created ImagePicker with %d images",
+      this.$store.state.images.length
+    );
     this.title = this.$store.state.tabTitle;
-    this.session = new ImageViewSession(this.$store.state.images, this.title, this.$store.state.tabUrl);
+    this.session = new ImageViewSession(
+      this.$store.state.images,
+      this.title,
+      this.$store.state.tabUrl
+    );
 
     // Load settings
     this.settings = gSettingManager.loadSettings((loadedSetting, hasUpdate) => {
@@ -89,9 +126,16 @@ export default {
       let sizeLimit = new RangeLimit(this.settings.filter.sizeLimit);
       let widthLimit = new RangeLimit(this.settings.filter.widthLimit);
       let heightLimit = new RangeLimit(this.settings.filter.heightLimit);
-      this.filter = new Filter(domainData, typeData, sizeLimit, widthLimit, heightLimit);
+      this.filter = new Filter(
+        domainData,
+        typeData,
+        sizeLimit,
+        widthLimit,
+        heightLimit
+      );
 
-      this.showDrawer = !(this.settings.view.viewMode == 'Percent100');
+      this.$vuetify.theme.dark = this.settings.view.themeDark;
+      this.showDrawer = !(this.settings.view.viewMode == "Percent100");
 
       // Show the selected image after init
       this.showTab(0);
@@ -107,11 +151,11 @@ export default {
       selectedImageCount: 0,
       unselectedImageCount: 0,
       showSnackbar: false,
-      undoSnackbarFunc: null,
+      undoSnackbarFunc: function() {},
       showMenu: false,
       showDrawer: true,
-      message: '',
-      title: '',
+      message: "",
+      title: ""
     };
   },
 
@@ -130,18 +174,18 @@ export default {
 
     onSettingChange: function(changedSettingName) {
       this.saveSettings();
-      if (changedSettingName == 'viewMode') {
-        this.showDrawer = !(this.settings.view.viewMode == 'Percent100');
+      if (changedSettingName == "viewMode") {
+        this.showDrawer = !(this.settings.view.viewMode == "Percent100");
       }
     },
 
     onImageClicked: function(imageId, event) {
       let likeOps = this.settings.behavior.likeImage;
-      if (likeOps == 'CtrlClick' && !event.ctrlKey) {
+      if (likeOps == "CtrlClick" && !event.ctrlKey) {
         return;
-      } else if (likeOps == 'AltClick' && !event.altKey) {
+      } else if (likeOps == "AltClick" && !event.altKey) {
         return;
-      } else if (likeOps == 'ShiftClick' && !event.shiftKey) {
+      } else if (likeOps == "ShiftClick" && !event.shiftKey) {
         return;
       }
 
@@ -165,20 +209,23 @@ export default {
           this.session.addUnLikeImages(image);
           this.showTab(this.activeTabIdx);
         };
-        this.showMessage(`Like image: ${image.fileFullName}. It will be always selected for download.`);
+        this.showMessage(
+          `Like image: ${image.fileFullName}. It will be always selected for download.`
+        );
       }
       this.showTab(this.activeTabIdx);
     },
 
     changeTheme: function() {
       this.settings.view.themeDark = !this.settings.view.themeDark;
+      this.$vuetify.theme.dark = this.settings.view.themeDark;
       this.saveSettings();
     },
 
     saveSettings() {
       chrome.runtime.sendMessage({
-        type: 'SaveSettings',
-        settings: this.settings,
+        type: "SaveSettings",
+        settings: this.settings
       });
     },
 
@@ -200,20 +247,22 @@ export default {
     },
 
     saveImages: function() {
-      this.showMessage('Saving ' + this.images.length + ' images to ' + this.title);
+      this.showMessage(
+        "Saving " + this.images.length + " images to " + this.title
+      );
       chrome.runtime.sendMessage({
-        type: 'BatchDownload',
+        type: "BatchDownload",
         images: this.images,
         tabUrl: this.session.tabUrl,
-        savedfolderName: this.title,
+        savedfolderName: this.title
       });
     },
 
     showMessage: function(message) {
       this.message = message;
       this.showSnackbar = true;
-    },
-  },
+    }
+  }
 };
 </script>
 <style>

@@ -1,30 +1,30 @@
-import store from './store';
-import gDownloader from './core/model/downloader';
-import gSettingManager from './core/model/setting';
-import { Image } from './core/model';
+import store from "./store";
+import gDownloader from "./core/model/downloader";
+import gSettingManager from "./core/model/setting";
+import { Image } from "./core/model";
 
 // alert(`Hello ${store.getters.title}!`);
 
-console.log('ImagePicker started.');
+console.log("ImagePicker started.");
 
 // Called when the user clicks on the browser action icon.
 chrome.browserAction.onClicked.addListener(function(tab) {
   // Open ImagePicker UI
-  var imagepicker_url = chrome.extension.getURL('popup/popup.html');
+  var imagepicker_url = chrome.extension.getURL("popup.html");
   chrome.tabs.create({
     url: imagepicker_url,
-    openerTabId: tab.id,
+    openerTabId: tab.id
   });
 });
 
 gSettingManager.loadSettings((loadedSetting, hasUpdate) => {});
 
 chrome.runtime.onMessage.addListener(function(message, sender) {
-  console.log('Received: %o', message);
+  console.log("Received: %o", message);
 
-  if (message.type == 'SaveSettings') {
+  if (message.type == "SaveSettings") {
     gSettingManager.saveSettings(message.settings);
-  } else if (message.type == 'SingleDownload') {
+  } else if (message.type == "SingleDownload") {
     const img = message.image;
     const tabUrl = sender.tab.url;
     const tabTitle = sender.tab.title;
@@ -38,15 +38,15 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
     let settings = gSettingManager.settings;
 
     const action = settings.sinlgeDownload.action;
-    if (action == 'CtrlClick' && event.ctrlKey && event.click) {
+    if (action == "CtrlClick" && event.ctrlKey && event.click) {
       needSave = true;
-    } else if (action == 'ShiftClick' && event.shiftKey && event.click) {
+    } else if (action == "ShiftClick" && event.shiftKey && event.click) {
       needSave = true;
-    } else if (action == 'AltClick' && event.altKey && event.click) {
+    } else if (action == "AltClick" && event.altKey && event.click) {
       needSave = true;
-    } else if (action == 'ClickOnly' && event.click) {
+    } else if (action == "ClickOnly" && event.click) {
       needSave = true;
-    } else if (action == 'Drag' && isDrag) {
+    } else if (action == "Drag" && isDrag) {
       needSave = true;
     }
     //alert('Saving ' + action + " needSave=" + needSave);
@@ -60,12 +60,14 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
     // gSavedTabUrls.push(tabUrl);
     // alert('Saving ' + img.src);
     if (needSave) {
-      console.log('Check ImagePicker Settings. %o', settings);
-      const folderName = settings.sinlgeDownload.createSubFolderByTitle ? tabTitle : '';
+      console.log("Check ImagePicker Settings. %o", settings);
+      const folderName = settings.sinlgeDownload.createSubFolderByTitle
+        ? tabTitle
+        : "";
       gDownloader.init(folderName);
       gDownloader.download([new Image(img)], tabUrl);
     }
-  } else if (message.type == 'BatchDownload') {
+  } else if (message.type == "BatchDownload") {
     const images = message.images;
     const tabUrl = message.tabUrl;
     const savedfolderName = message.savedfolderName;
@@ -73,6 +75,6 @@ chrome.runtime.onMessage.addListener(function(message, sender) {
     gDownloader.init(savedfolderName);
     gDownloader.download(images, tabUrl);
 
-    console.log('Download images: %o', images);
+    console.log("Download images: %o", images);
   }
 });

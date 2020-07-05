@@ -1,14 +1,14 @@
 <template>
-    <image-picker/>
+  <image-picker />
 </template>
 
 <script>
-import ImagePicker from '../core/components/ImagePicker';
+import ImagePicker from "../core/components/ImagePicker";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    ImagePicker,
-  },
+    ImagePicker
+  }
 };
 </script>

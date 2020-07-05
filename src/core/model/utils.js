@@ -1,8 +1,8 @@
-import { Category } from './filter';
+import { Category } from "./filter";
 
 function initData() {
-  let domains = ['google.com', 'qq.com', '163.com'];
-  let imageTypes = ['jpg', 'gif', 'png'];
+  let domains = ["google.com", "qq.com", "163.com"];
+  let imageTypes = ["jpg", "gif", "png"];
   let images = [];
   for (let i = 0; i < 20; i++) {
     let imgId = 1000 + i;
@@ -10,12 +10,12 @@ function initData() {
     let typeIdx = Math.floor(Math.random() * Math.floor(imageTypes.length));
     let img = {
       id: imgId,
-      src: 'https://unsplash.it/150/300?image=' + imgId,
+      src: "https://unsplash.it/150/300?image=" + imgId,
       type: imageTypes[typeIdx],
       domain: domains[domainIdx],
       size: 1000 + 10 * i,
       width: 800 + 100 * i,
-      height: 600 + 50 * i,
+      height: 600 + 50 * i
     };
     images.push(img);
   }
@@ -90,18 +90,18 @@ function getImageTypes(images) {
  */
 function toValidFileName(originalName) {
   if (!originalName) {
-    return '';
+    return "";
   }
 
   var validName = originalName;
 
   // replace special char: [,\,/,:,*,.,?,",<,>,|,]
-  var reg = new RegExp('[\\/:*?"<>|]', 'g');
-  validName = validName.replace(reg, '');
+  var reg = new RegExp('[\\/:*?"<>|]', "g");
+  validName = validName.replace(reg, "");
   validName = validName.substr(0, 100);
 
   // trim
-  validName = validName.replace(/^\s*/, '').replace(/\s*$/, '');
+  validName = validName.replace(/^\s*/, "").replace(/\s*$/, "");
 
   return validName;
 }

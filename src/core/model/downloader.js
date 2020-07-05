@@ -1,5 +1,5 @@
-import { toValidFileName } from './utils';
-const EXTENSION_NAME = 'Image Picker v3';
+import { toValidFileName } from "./utils";
+const EXTENSION_NAME = "Image Picker v3";
 
 class Downloader {
   constructor() {
@@ -14,19 +14,22 @@ class Downloader {
       // First init (Chrome allow 1 addListener() call only)
       this.downloadFolder.name = validFolder;
       const folderNameHolder = this.downloadFolder;
-      chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-        console.log('DownloadItem %o', item);
+      chrome.downloads.onDeterminingFilename.addListener(function(
+        item,
+        suggest
+      ) {
+        console.log("DownloadItem %o", item);
         if (item.byExtensionName != EXTENSION_NAME) {
           return;
         }
 
         let filePath = item.filename;
-        if (folderNameHolder.name && folderNameHolder.name != '') {
-          filePath = folderNameHolder.name + '/' + item.filename;
+        if (folderNameHolder.name && folderNameHolder.name != "") {
+          filePath = folderNameHolder.name + "/" + item.filename;
         }
         suggest({
           filename: filePath,
-          conflictAction: 'uniquify',
+          conflictAction: "uniquify"
         });
       });
     }
@@ -40,19 +43,23 @@ class Downloader {
       function(details) {
         var headers = details.requestHeaders;
         headers.push({
-          name: 'Referer',
-          value: refer,
+          name: "Referer",
+          value: refer
         });
         // console.log('headers: %o', Headers);
         return { requestHeaders: headers };
       },
       {
-        urls: ['<all_urls>'],
+        urls: ["<all_urls>"]
       },
-      ['blocking', 'requestHeaders']
+      ["blocking", "requestHeaders"]
     );
 
-    console.log('Saving %d images to %s', images.length, this.downloadFolder.name);
+    console.log(
+      "Saving %d images to %s",
+      images.length,
+      this.downloadFolder.name
+    );
 
     images.forEach(img => {
       chrome.downloads.download(
@@ -60,10 +67,10 @@ class Downloader {
           url: img.src,
           filename: img.fileFullName,
           saveAs: false,
-          conflictAction: 'uniquify',
+          conflictAction: "uniquify"
         },
         function(downloadId) {
-          console.log('Saved image: %s', img.src);
+          console.log("Saved image: %s", img.src);
         }
       );
     });

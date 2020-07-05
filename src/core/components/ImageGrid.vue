@@ -1,37 +1,37 @@
 <template>
   <v-container fluid>
-    <v-layout :row="isThumbnail" :column="!isThumbnail" wrap="true">
-      <v-flex v-for="img in images" :key="img.id">
+    <v-row :row="isThumbnail" :column="!isThumbnail" wrap="true">
+      <v-col v-for="img in images" :key="img.id">
         <div @click="$emit('image-clicked', img.id, $event)">
-          <ImageBox :image="img" :settings="settings"/>
+          <ImageBox :image="img" :settings="settings" />
         </div>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import ImageBox from './ImageBox.vue';
+import ImageBox from "./ImageBox.vue";
 
 export default {
   props: {
     images: {
       type: Array,
-      required: true,
+      required: true
     },
     settings: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   components: {
-    ImageBox,
+    ImageBox
   },
 
   computed: {
     isThumbnail: function() {
-      return this.settings.view.viewMode == 'Thumbnail';
-    },
-  },
+      return this.settings.view.viewMode == "Thumbnail";
+    }
+  }
 };
 </script>

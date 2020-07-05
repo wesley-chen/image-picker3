@@ -12,20 +12,23 @@
           class="ip-image"
           :style="imageStyle"
           contain
-          :aspect-ratio="image.width/image.height"
+          :aspect-ratio="image.width / image.height"
         >
           <div v-if="image.like != null">
-            <v-icon color="pink" v-html="image.like ?  'favorite': 'close'"></v-icon>
+            <v-icon
+              color="pink"
+              v-html="image.like ? 'favorite' : 'close'"
+            ></v-icon>
           </div>
         </v-img>
       </div>
-      <v-card-title v-if="showCaption">
-        <v-layout column>
-          <div v-if="settings.view.showImageName">{{image.fileName}}.{{image.type}}</div>
-          <div v-if="settings.view.showImageMeta">{{this.imageMetaInfo}}</div>
-          <div v-if="settings.view.showImageUrl">{{image.src}}</div>
-        </v-layout>
-      </v-card-title>
+      <v-card-text v-if="showCaption">
+        <div v-if="settings.view.showImageName">
+          {{ image.fileName }}.{{ image.type }}
+        </div>
+        <div v-if="settings.view.showImageMeta">{{ imageMetaInfo }}</div>
+        <div v-if="settings.view.showImageUrl">{{ image.src }}</div>
+      </v-card-text>
     </v-card>
   </v-hover>
 </template>
@@ -35,34 +38,41 @@ export default {
   props: {
     image: {
       type: Object,
-      required: true,
+      required: true
     },
 
     settings: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
   computed: {
     imageMetaInfo: function() {
-      return this.image.width + ' x ' + this.image.height + ',' + Math.round(this.image.fileSize / 1000) + 'KB';
+      return (
+        this.image.width +
+        " x " +
+        this.image.height +
+        ", " +
+        Math.round(this.image.fileSize / 1000) +
+        "KB"
+      );
     },
     cardStyle: function() {
       // Display as Thumbnail by default
       const thumbWidth = this.settings.view.thumbnailWidth;
       let style = {
-        width: thumbWidth + 'px',
+        width: thumbWidth + "px"
       };
 
-      if (this.settings.view.viewMode == 'FitWidth') {
+      if (this.settings.view.viewMode == "FitWidth") {
         style = {
-          width: '100%',
+          width: "100%"
         };
-      } else if (this.settings.view.viewMode == 'Percent100') {
+      } else if (this.settings.view.viewMode == "Percent100") {
         style = {
           // set a very large width to show full image
-          width: '999999px',
+          width: "999999px"
         };
       }
       return style;
@@ -71,11 +81,11 @@ export default {
     boxStyle: function() {
       const thumbWidth = this.settings.view.thumbnailWidth;
       let style = {
-        display: 'flex',
-        'align-items': 'center',
+        display: "flex",
+        "align-items": "center"
       };
 
-      if (this.settings.view.viewMode == 'Percent100') {
+      if (this.settings.view.viewMode == "Percent100") {
         style = {};
       }
       return style;
@@ -85,16 +95,16 @@ export default {
       const img = this.image;
       const thumbWidth = this.settings.view.thumbnailWidth;
       var imageRate = thumbWidth / Math.max(img.width, img.height, 1);
-      if (imageRate > 1 || this.settings.view.viewMode != 'Thumbnail') {
+      if (imageRate > 1 || this.settings.view.viewMode != "Thumbnail") {
         // for small image, no change
         imageRate = 1;
       }
-      //Sometimes, image is not load completed, width or height may is 0
+      // Sometimes, image is not load completed, width or height may is 0
       var imgWidth = Math.max(imageRate * img.width, 1);
       var imgHeight = Math.max(imageRate * img.height, 1);
       return {
-        width: imgWidth + 'px',
-        height: imgHeight + 'px',
+        width: imgWidth + "px",
+        height: imgHeight + "px"
       };
     },
 
@@ -104,8 +114,8 @@ export default {
       const showURL = this.settings.view.showImageUrl;
 
       return showName || showMeta || showURL;
-    },
-  },
+    }
+  }
 };
 </script>
 <style>

@@ -1,29 +1,48 @@
 {
-  "name": "Image Picker v3",
-  "description": "Choose (filter) images and save images from web page to local disk.",
-  "version": "3.0.2",
   "manifest_version": 2,
+  "name": "__MSG_extName__",
+  "homepage_url": "https://github.com/wesley-chen/image-picker3/",
+  "description": "Choose (filter) images and save images from web page to local disk.",
+  "version": "3.0.3",
+  "default_locale": "en",
   "icons": {
     "32": "icons/img-picker_32.png",
     "48": "icons/img-picker_32.png",
     "128": "icons/img-picker_32.png"
   },
-  "permissions": ["activeTab", "tabs", "storage", "downloads", "webRequest", "webRequestBlocking", "<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "downloads",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["image_collector.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "js/content-script.js"
+      ]
     }
   ],
-  "web_accessible_resources": ["fonts/*", "image_collector.js"],
+  "web_accessible_resources": [
+    "fonts/*",
+    "js/content-script.js"
+  ],
   "browser_action": {
-    "default_title": "Image Picker v3"
+    "default_title": "__MSG_extName__"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "js/background.js"
+    ]
   },
   "options_ui": {
-    "page": "options/options.html",
+    "page": "options.html",
     "open_in_tab": false
   }
 }

@@ -6,8 +6,10 @@ class RangeLimit {
   }
 
   isInRange(value) {
-    let isLargeThanMin = !Number.isFinite(this.min) || !Number.isFinite(value) || this.min < value;
-    let isLessThanMax = !Number.isFinite(this.max) || !Number.isFinite(value) || this.max > value;
+    let isLargeThanMin =
+      !Number.isFinite(this.min) || !Number.isFinite(value) || this.min < value;
+    let isLessThanMax =
+      !Number.isFinite(this.max) || !Number.isFinite(value) || this.max > value;
     //debugger;
     return isLargeThanMin && isLessThanMax;
   }
@@ -38,7 +40,9 @@ class Filter {
 
   filter(images) {
     let selectedDomains = this.domains.filter(d => d.selected).map(d => d.name);
-    let selectedTypes = this.imageTypes.filter(t => t.selected).map(t => t.name);
+    let selectedTypes = this.imageTypes
+      .filter(t => t.selected)
+      .map(t => t.name);
 
     let selectedImages = images
       .filter(img => {
