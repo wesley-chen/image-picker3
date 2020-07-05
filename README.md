@@ -1,5 +1,7 @@
 # image-picker v3
 
+![Build](https://github.com/wesley-chen/image-picker3/workflows/Node.js%20CI/badge.svg)
+
 ## Project setup
 ```
 yarn install
